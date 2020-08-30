@@ -17,6 +17,9 @@ for i in "${!containers[@]}"; do
     out+="${name}:|${status,,}|"
     (( $(( (i+1) % columns )) == 0 )) && out+='\n'
 done
+if [[ -z "${out}" ]]; then
+    out='none'
+fi
 out+='\n'
 
 echo
