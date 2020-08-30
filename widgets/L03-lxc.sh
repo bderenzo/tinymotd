@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+#  lxc status:
+#    git:   stopped  mailer:  stopped
+#    dlna:  running  plex:    stopped
+
+columns=2
+
+# Get containers
+mapfile -t containers < <(lxc-ls -f | awk '{ print $1,$2 }' | sed '/^\s*$/d' | tail -n +2)
+
+out=''
+source ../tools/colors.sh
+for i in "${!containers[@]}"; do
+    IFS=" " read name status <<< "${containers[$i]}"
+    status=$(c_match "${status}" 'RUNNING')
+    out+="${name}:|${status,,}|"
+    (( $(( (i+1) % columns )) == 0 )) && out+='\n'
+done
+out+='\n'
+
+echo
+echo 'containers:'
+echo -e "${out}" | column -ts '|' | sed -e 's/^/  /'
+

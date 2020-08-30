@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# go to local dir
+cd "$(dirname "$(readlink -f "$0")")"
+
+# view widgets
+echo
+cd widgets
+paste <(ls L[0-9]*) <(ls R[0-9]*) | column -t | sed 's,^,  ,'
+echo

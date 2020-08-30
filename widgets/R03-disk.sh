@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+# disk usage:
+#              Size  Used  Free  Use%
+#   /         10.0G  1.0G  9.0G   10%
+
+disk_warn=80 # %
+
+#width=5
+#bar() {
+#    ((elapsed=$1*$2/100))
+#    printf -v prog  "%${elapsed}s"
+#    printf -v total "%$(($2-elapsed))s"
+#    printf '%s\n' "[${prog// /o}${total}]"
+#}
+
+source ../tools/colors.sh
+mapfile -t dfs < <(df -h -x zfs -x squashfs -x tmpfs -x devtmpfs -x overlay --output=target,size,used,avail,pcent | tail -n+2 | sort)
+out=" |Size|Used|Free|Use%\n"
+for line in "${dfs[@]}"; do
+    IFS=" " read target size used avail pcent <<< "${line}"
+    [[ $target =~ /mnt/nfs$ ]] && continue
+    pcentnb=$(echo ${pcent} | sed 's,%,,')
+    pcent=$(c_if "${pcentnb}" '<' "${disk_warn}" '%')
+    #out+="  $target|$(bar $pcentnb $width)|$size|$used|$avail|$pcent\n"
+    out+="${target}|${size}|${used}|${avail}|${pcent}\n"
+done
+
+if [[ -e /dev/mapper/lxc-pool ]]; then
+    btog(){ echo "$1" | awk '{ printf "%.0fG\n", $1/1024^3; }'; }
+    IFS=" " read pcentnb size < <(lvs --noheadings -o data_percent,lv_size --units b lxc/pool)
+    pcentnb=$(echo "${pcentnb}" | grep -o '^[0-9]*')
+    size=$(echo "${size}" | grep -o '^[0-9]*')
+    used=$(( pcentnb * size / 100 ))
+    avail=$(( size - used ))
+    pcent=$(c_if "${pcentnb}" '<' "${disk_warn}" '%')
+    out+="+lxc|$(btog "${size}")|$(btog "${used}")|$(btog "${avail}")|${pcent}"
+fi
+
+echo
+echo 'disk usage:'
+echo -e "${out}" | column -ts'|' | sed 's,^,  ,'
+

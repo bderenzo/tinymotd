@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+# system info:                            network:
+#   system load:   0.00  process:  99       public ip:   10.20.30.40
+#   cpu usage:     0%    uptime:   10d      private ip:  192.168.1.2
+#   memory usage:  10%   users:    1
+#                                         certificates:
+# services:                                 google.fr        valid  01/01/2020
+#   apparmor:    active    cron:  active    debian.org       valid  01/01/2020
+#   logrotate:   inactive  lxc:   active    wikipedia.org    valid  01/01/2020
+#   networking:  active    sshd:  active
+#                                         disk usage:
+# lxc status:                                        Size  Used  Free  Use%
+#   git:   stopped  mailer:  stopped        /       10.0G  1.0G  9.0G   10%
+#   dlna:  running  plex:    stopped
+
+# go to script dir
+cd "$(dirname "$(readlink -f "$0")")"
+
+# remove old values
+if [[ $1 == '-f' ]]; then
+    rm -f /tmp/.motd.*
+fi
+
+# print header
+cat headers/*
+
+# get widgets
+cd widgets
+for m in L*.sh; do
+    LEFT+="$(./$m)\n"
+done
+for m in R*.sh; do
+    RIGHT+="$(./$m)\n"
+done
+
+# print widgets
+paste <(echo -e "$LEFT") <(echo -e "$RIGHT") -d '@' | sed -e 's,@, @ ,' | column -ts '@'
+

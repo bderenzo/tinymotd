@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+# go to script dir
+cd "$(dirname "$(readlink -f "$0")")"
+
+# parse args
+while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
+    case "$1" in
+        -u|--user)      shift; user="$1";;
+    esac
+    shift
+done
+
+# get homedir
+home="$(getent passwd "${user}" | cut -d: -f6)"
+
+# motd file
+motd='/tmp/.motd'
+
+# add cron rule
+cron='/etc/cron.hourly/motd'
+cat <<EOF > "${cron}"
+#!/usr/bin/env bash
+$(pwd)/generate > "${motd}"
+EOF
+chmod +x "${cron}"
+
+# add print 
+bashrc="${home}/.bashrc"
+cat <<EOF >> "${bashrc}"
+# motd supervision
+if [[ -f "${motd}" ]]; then
+    clear && cat "${motd}"
+fi
+EOF
+
