@@ -6,12 +6,12 @@
 
 date=$(date +%Y%m%d)
 tmp=/tmp/.motd.network
-domain=bdr.ddns.net
+domain='myip.opendns.com @resolver1.opendns.com'
 
 [[ -r "${tmp}" ]] && source "${tmp}"
 if [[ "${lastupdate}" != "${date}" ]]; then
-    privateip=$(hostname -I | cut -d' ' -f1)
-    publicip=$(dig +short "${domain}")
+    privateip=$(ip route get 1.2.3.4 | awk '/^1.2.3.4/ {print $7}')
+    publicip=$(dig +short ${domain})
     echo "lastupdate=${date}"     >  "${tmp}"
     echo "publicip=${publicip}"   >> "${tmp}"
     echo "privateip=${privateip}" >> "${tmp}"
