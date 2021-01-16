@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
 #  system info:
-#    system load:   0.01  process:  120
-#    cpu usage:     0%    uptime:   30d
-#    memory usage:  5%    users:    1
-#    temperature:   45°c
+#    system load   0.01  process  120
+#    cpu usage     5%    uptime   30d
+#    memory usage  10%   users    1
+#    temperature   45°c
 
 mem_warn=50  # %
 cpu_warn=20  # %
@@ -17,22 +17,24 @@ up="$(( $(cat /proc/uptime | cut -d'.' -f1) / 3600 / 24 ))"
 mem="$(free -b | awk 'FNR == 2 {p=100*$3/$2} END{printf("%0.f",p)}')"
 cpunb="$(grep -i '^processor' /proc/cpuinfo | wc -l)"
 cpu="$(../tools/cpu.sh)"
+kern="v$(uname -r | cut -d'.' -f1-2)"
 
 source ../tools/colors.sh
-#ps=$(c_if $ps '<' '150')
+#ps=$(c_if "${ps}" '<' '150')
 mem=$(c_if  "${mem}"  '<' "${mem_warn}" '%')
 load=$(c_if "${load}" '<' "$cpunb")
 cpu=$(c_if  "${cpu}"  '<' "${cpu_warn}" '%')
 
-out+="system load:|${load}|process:|${ps}\n"
-out+="cpu usage:|${cpu}|uptime:|${up}d\n"
-out+="memory usage:|${mem}|users:|${users}\n"
+out+="system load|${load}|process|${ps}\n"
+out+="cpu usage|${cpu}|uptime|${up}d\n"
+out+="memory usage|${mem}|users|${users}\n"
 
 if [[ -f '/sys/class/thermal/thermal_zone0/temp' ]]; then
     temp="$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000 ))"
     temp=$(c_if "${temp}" '<' "${temp_warn}" '°c')
-    out+="|temperature:|${temp}"
+    out+="temperature|${temp}|"
 fi
+out+="kernel|${kern}\n"
 
 echo
 echo 'system info:'

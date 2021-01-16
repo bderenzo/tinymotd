@@ -5,13 +5,12 @@
 #   /         10.0G  1.0G  9.0G   10%
 
 disk_warn=80 # %
-
 #width=5
 #bar() {
 #    ((elapsed=$1*$2/100))
 #    printf -v prog  "%${elapsed}s"
 #    printf -v total "%$(($2-elapsed))s"
-#    printf '%s\n' "[${prog// /o}${total}]"
+#    printf '%s\n' "[${prog// /+}${total}]"
 #}
 
 source ../tools/colors.sh

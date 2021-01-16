@@ -1,0 +1,11 @@
+#
+# display configuration, avalaible widgets: 
+#   sysinfo, services, lxc, pkgs, net, certs, disk, last, backup
+#
+
+# col=2
+sysinfo   net
+services  certs
+lxc       disks
+pkgs      last
+
