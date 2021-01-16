@@ -6,7 +6,7 @@ To install this, with root rights:
 
 * Clone the repo
 * Install: `sudo ./install -u <user>`
-* Configure widget layout: `vim ./config`
+* Configure widget layout: `vim ./layout.conf`
 * Configure widgets: `vim ./widgets/<widget-name>`
 * Run interactively: `sudo ./generate`
 
