@@ -13,10 +13,10 @@ cat headers/*
 
 # get widgets results
 cd widgets
-col=$(grep 'col=' ../config | sed 's/.*col=//')
+col=$(grep 'col=' ../layout.conf | sed 's/.*col=//')
 # execute widgets in columns
 for i in $(seq 1 "${col}"); do
-    for w in $(awk '!/^#/ {print $'$i'}' ../config); do
+    for w in $(awk '!/^#/ {print $'$i'}' ../layout.conf); do
         # append content
         [ -e "${w}" ] && f[$i]="${f[$i]} $(./${w})\n"
     done
