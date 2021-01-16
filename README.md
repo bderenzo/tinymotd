@@ -10,6 +10,8 @@ To install this, with root rights:
 * Configure widgets: `vim ./widgets/<widget-name>`
 * Run interactively: `sudo ./generate`
 
+The script runs every hour for system information (cpu, disk, ...) and every day for other information (certificates, packages, ...).
+
 ## Profit
 
 ```
