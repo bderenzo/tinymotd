@@ -1,6 +1,7 @@
 #
-# display configuration, avalaible widgets: 
-#   sysinfo, services, lxc, pkgs, net, certs, disk, last, backup
+# widget layout configuration, avalaible widgets: 
+#  > sysinfo, services, lxc, pkgs, net, certs, disk, last, backup
+# for widget configuration, edit widget file
 #
 
 # col=2
