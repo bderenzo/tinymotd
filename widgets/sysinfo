@@ -10,7 +10,7 @@ mem_warn=50  # %
 cpu_warn=20  # %
 temp_warn=60 # °c
 
-ps="$(ps -haux | wc -l)"
+ps="$(ps --ppid 2 -p 2 --deselect | wc -l)"
 load="$(cat /proc/loadavg | cut -d' ' -f3)"
 users="$(w -h | wc -l)"
 up="$(( $(cat /proc/uptime | cut -d'.' -f1) / 3600 / 24 ))"
@@ -25,7 +25,7 @@ mem=$(c_if  "${mem}"  '<' "${mem_warn}" '%')
 load=$(c_if "${load}" '<' "$cpunb")
 cpu=$(c_if  "${cpu}"  '<' "${cpu_warn}" '%')
 
-out+="system load|${load}|process|${ps}\n"
+out+="system load|${load}|tasks|${ps}\n"
 out+="cpu usage|${cpu}|uptime|${up}d\n"
 out+="memory usage|${mem}|users|${users}\n"
 
