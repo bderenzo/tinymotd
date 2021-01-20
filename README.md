@@ -24,17 +24,19 @@ The script runs every hour for system information (cpu, disk, ...) and every day
               | o o o o o o o o o  /
      ~  ~ ~~~~'~~~~~~~~~~~~~~~~~~~'~~~~ ~  ~
 
-  system info:                            network:
-    system load:   0.00  process:  99       public ip:   10.20.30.40
-    cpu usage:     0%    uptime:   10d      private ip:  192.168.0.10
-    memory usage:  10%   users:    1
-                                          certificates:
-  services:                                 google.fr        valid  01/01/2020
-    apparmor:    active    cron:  active    debian.org       valid  01/01/2020
-    logrotate:   inactive  lxc:   active    wikipedia.org    valid  01/01/2020
-    networking:  active    sshd:  active    domain.org       valid  01/01/2020
+system info:                           network:
+  system load   0.50  tasks   199        public ip   10.20.30.40
+  cpu usage     0%    uptime  10d        private ip  192.168.0.10
+  memory usage  10%   users   1
+  temperature   40°c  kernel  v5.4     disk usage:
+                                                  Size  Used  Free  Use%
+services:                                /        10G   1.0G  9.0G  10%
+  syslog     active  cron   active       +lxc     100G  10G   90G   10%
+  logrotate  active  sshd   active
+  network    active  lxc    active     packages:
+  iptables   active  lxcfs  active       no new package avalaible...
 
-  containers:                             disk usage:
-    git:   stopped  mailer:  stopped                   Size  Used  Free  Use%
-    dlna:  running  plex:    stopped        /         10.0G  1.0G  9.0G   10%
+containers:                            last execution:
+  git    running  media   running        Wednesday 20 January, 23:27:18
+  blog   running  mailer  running
 ```
