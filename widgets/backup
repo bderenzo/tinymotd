@@ -14,8 +14,8 @@ bkp_names=('data'                'documents'                'cloud')
 out=''
 source ../tools/colors.sh
 for i in "${!bkp_files[@]}"; do
-    bkp_status=$(cat "${bkp_files[$i]}" | cut -d';' -f1)
-    bkp_date_raw=$(cat "${bkp_files[$i]}" | cut -d';' -f2)
+    bkp_status=$(tail -n1 "${bkp_files[$i]}" | cut -d';' -f2)
+    bkp_date_raw=$(tail -n1 "${bkp_files[$i]}" | cut -d';' -f1)
     bkp_date=$(date -d "${bkp_date_raw}" +"%d/%m/%Y")
     if [[ "${bkp_status}" == 'success' ]]; then
     	diff=$(( ($(date +%s)-$(date +%s -d ${bkp_date_raw}))/86400 ))
@@ -31,4 +31,3 @@ out+='\n'
 echo
 echo 'backup:'
 echo -e "${out}" | column -ts '|' | sed -e 's/^/  /'
-

@@ -39,4 +39,3 @@ out+="kernel|${kern}\n"
 echo
 echo 'system info:'
 echo -e "${out}" | column -ts'|' | sed 's,^,  ,'
-

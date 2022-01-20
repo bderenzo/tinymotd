@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+#  packages:
+#    3 new packages avalaible...
+
+date=$(date +%Y%m%d)
+tmp=/tmp/.motd/pacman
+
+[[ -r "${tmp}" ]] && source "${tmp}"
+if [[ "${lastupdate}" != "${date}" ]]; then
+    source ../tools/colors.sh
+    tmppath=/tmp/.motd/pacman
+    mkdir -p "${tmppath}"
+    dbpath="$(pacman-conf DBPath)"
+    ln -s "${dbpath}/local" "${tmppath}" &>/dev/null
+    fakeroot -- pacman -Sy --dbpath "${tmppath}" --logfile /dev/null &>/dev/null
+    pkgs=$(pacman -Qu --dbpath "${tmppath}" 2>/dev/null | wc -l)
+    pkgs=$(c_if_r "${pkgs}" '<' '1' 'no new package' "${pkgs} new packages")
+    echo "lastupdate=${date}" >  "${tmp}"
+    echo "pkgs='${pkgs}'"     >> "${tmp}"
+fi
+
+echo
+echo 'packages:'
+echo -e "  ${pkgs} avalaible..."

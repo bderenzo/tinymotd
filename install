@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# version permission
+if [ "$(id -u)" != "0" ]; then
+    echo >&2 "error: permission denied"
+    echo >&2 'installation requires root privileges'
+    exit 1
+fi
+
 # go to script dir
 cd "$(dirname "$(readlink -f "$0")")"
 
@@ -11,6 +18,11 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
     shift
 done
 
+if [[ -z "${user}" ]]; then
+    echo >&2 "usage: ./$(basename "${0}") --user <USER>"
+    exit 1
+fi
+
 # get homedir
 home="$(getent passwd "${user}" | cut -d: -f6)"
 
@@ -18,7 +30,8 @@ home="$(getent passwd "${user}" | cut -d: -f6)"
 motd='/tmp/.motd'
 
 # add cron rule
-cron='/etc/cron.hourly/motd'
+cron='/etc/cron.hourly/tinymotd'
+echo "[+] add cron in ${cron}"
 cat <<EOF > "${cron}"
 #!/usr/bin/env bash
 $(pwd)/generate > "${motd}"
@@ -27,10 +40,10 @@ chmod +x "${cron}"
 
 # add print 
 bashrc="${home}/.bashrc"
+echo "[+] add motd load in ${bashrc}"
 cat <<EOF >> "${bashrc}"
 # motd supervision
 if [[ -f "${motd}" ]]; then
-    clear && cat "${motd}"
+    cat "${motd}"
 fi
 EOF
-

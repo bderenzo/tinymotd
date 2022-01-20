@@ -6,8 +6,8 @@
 #    network    active    sshd  active
 
 columns=2
-services=( 'rsyslog' 'cron' 'logrotate.timer' 'sshd' 'networking' 'lxc' 'netfilter-persistent' 'lxcfs')
-svc_names=('syslog'  'cron' 'logrotate'       'sshd' 'network'    'lxc' 'iptables'             'lxcfs')
+services=( 'rsyslog' 'cron' 'logrotate.timer' 'sshd' 'networking')
+svc_names=('syslog'  'cron' 'logrotate'       'sshd' 'network'  )
 
 out=''
 source ../tools/colors.sh
@@ -22,4 +22,3 @@ out+='\n'
 echo
 echo 'services:'
 echo -e "${out}" | column -ts '|' | sed -e 's/^/  /'
-

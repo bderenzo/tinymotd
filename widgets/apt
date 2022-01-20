@@ -4,7 +4,7 @@
 #    3 new packages avalaible...
 
 date=$(date +%Y%m%d)
-tmp=/tmp/.motd.pkgs
+tmp=/tmp/.motd/apt
 
 [[ -r "${tmp}" ]] && source "${tmp}"
 if [[ "${lastupdate}" != "${date}" ]]; then
@@ -19,4 +19,3 @@ fi
 echo
 echo 'packages:'
 echo -e "  ${pkgs} avalaible..."
-

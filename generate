@@ -3,9 +3,13 @@
 # go to script dir
 cd "$(dirname "$(readlink -f "$0")")"
 
+# create tmp dir
+if ! [[ -d /tmp/.motd ]]; then
+    mkdir /tmp/.motd
+fi
 # remove old values
 if [[ $1 == '-f' ]]; then
-    rm -f /tmp/.motd.*
+    rm -f /tmp/.motd/*
 fi
 
 # print header
@@ -13,10 +17,10 @@ cat headers/*
 
 # get widgets results
 cd widgets
-col=$(grep 'col=' ../layout.conf | sed 's/.*col=//')
+col=$(grep 'col=' ../config | sed 's/.*col=//')
 # execute widgets in columns
 for i in $(seq 1 "${col}"); do
-    for w in $(awk '!/^#/ {print $'$i'}' ../layout.conf); do
+    for w in $(awk '!/^#/ {print $'$i'}' ../config); do
         # append content
         [ -e "${w}" ] && f[$i]="${f[$i]} $(./${w})\n"
     done
