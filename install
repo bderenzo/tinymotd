@@ -27,7 +27,7 @@ fi
 home="$(getent passwd "${user}" | cut -d: -f6)"
 
 # motd file
-motd='/tmp/.motd'
+motd='/tmp/.motd/out'
 
 # add cron rule
 cron='/etc/cron.hourly/tinymotd'
