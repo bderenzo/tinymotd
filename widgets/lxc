@@ -4,7 +4,6 @@
 #    git   stopped  mailer  stopped
 #    dlna  running  plex    stopped
 
-# Get containers
 columns=2
 filter='nothing'  # excluded containers separated by |
 mapfile -t containers < <(lxc-ls -f | awk '!/^('${filter}')/{print $1,$2}' | sed '/^\s*$/d' | tail -n+2)

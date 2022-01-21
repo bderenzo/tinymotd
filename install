@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# version permission
+# verify permission
 if [ "$(id -u)" != "0" ]; then
     echo >&2 "error: permission denied"
     echo >&2 'installation requires root privileges'
@@ -27,23 +27,23 @@ fi
 home="$(getent passwd "${user}" | cut -d: -f6)"
 
 # motd file
-motd='/tmp/.motd/out'
+motd="$(pwd)/data/motd"
 
 # add cron rule
 cron='/etc/cron.hourly/tinymotd'
 echo "[+] add cron in ${cron}"
-cat <<EOF > "${cron}"
+cat << EOF > "${cron}"
 #!/usr/bin/env bash
-$(pwd)/generate > "${motd}"
+$(pwd)/generate > ${motd}
 EOF
 chmod +x "${cron}"
 
 # add print 
 bashrc="${home}/.bashrc"
 echo "[+] add motd load in ${bashrc}"
-cat <<EOF >> "${bashrc}"
+cat << EOF >> "${bashrc}"
 # motd supervision
-if [[ -f "${motd}" ]]; then
-    cat "${motd}"
+if [[ -f ${motd} ]]; then
+    cat ${motd}
 fi
 EOF

@@ -8,5 +8,6 @@
 sysinfo   network
 services  partitions
 lxc       apt
+-         certs
 -         lastexec
 

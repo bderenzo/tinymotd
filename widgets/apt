@@ -4,16 +4,16 @@
 #    3 new packages available...
 
 date=$(date +%Y%m%d)
-tmp=/tmp/.motd/apt
+data='../data/apt'
 
-[[ -r "${tmp}" ]] && source "${tmp}"
+[[ -r "${data}" ]] && source "${data}"
 if [[ "${lastupdate}" != "${date}" ]]; then
     source ../tools/colors.sh
     apt-get -qq update
     pkgs=$(apt -qq list --upgradable 2>/dev/null | wc -l)
     pkgs=$(c_if_r "${pkgs}" '<' '1' 'no new package' "${pkgs} new packages")
-    echo "lastupdate=${date}" >  "${tmp}"
-    echo "pkgs='${pkgs}'"     >> "${tmp}"
+    echo "lastupdate=${date}" >  "${data}"
+    echo "pkgs='${pkgs}'"     >> "${data}"
 fi
 
 echo

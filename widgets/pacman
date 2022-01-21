@@ -4,9 +4,9 @@
 #    3 new packages available...
 
 date=$(date +%Y%m%d)
-tmp=/tmp/.motd/pacman
+data='../data/pacman'
 
-[[ -r "${tmp}" ]] && source "${tmp}"
+[[ -r "${data}" ]] && source "${data}"
 if [[ "${lastupdate}" != "${date}" ]]; then
     source ../tools/colors.sh
     tmppath=/tmp/.motd/pacman
@@ -16,8 +16,8 @@ if [[ "${lastupdate}" != "${date}" ]]; then
     fakeroot -- pacman -Sy --dbpath "${tmppath}" --logfile /dev/null &>/dev/null
     pkgs=$(pacman -Qu --dbpath "${tmppath}" 2>/dev/null | wc -l)
     pkgs=$(c_if_r "${pkgs}" '<' '1' 'no new package' "${pkgs} new packages")
-    echo "lastupdate=${date}" >  "${tmp}"
-    echo "pkgs='${pkgs}'"     >> "${tmp}"
+    echo "lastupdate=${date}" >  "${data}"
+    echo "pkgs='${pkgs}'"     >> "${data}"
 fi
 
 echo

@@ -3,13 +3,13 @@
 # go to script dir
 cd "$(dirname "$(readlink -f "$0")")"
 
-# create tmp dir
-if ! [[ -d /tmp/.motd ]]; then
-    mkdir /tmp/.motd
+# create data dir
+if ! [[ -d "$(pwd)/data" ]]; then
+    mkdir "$(pwd)/data"
 fi
-# remove old values
+# remove old data
 if [[ $1 == '-f' ]]; then
-    rm -f /tmp/.motd/*
+    rm -f "$(pwd)/data"/*
 fi
 
 # print header
