@@ -22,4 +22,4 @@ fi
 
 echo
 echo 'packages:'
-echo -e "  ${pkgs} avalaible..."
+echo -e "  ${pkgs} available..."
