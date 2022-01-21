@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #  packages:
-#    3 new packages avalaible...
+#    3 new packages available...
 
 date=$(date +%Y%m%d)
 tmp=/tmp/.motd/apt
@@ -18,4 +18,4 @@ fi
 
 echo
 echo 'packages:'
-echo -e "  ${pkgs} avalaible..."
+echo -e "  ${pkgs} available..."
