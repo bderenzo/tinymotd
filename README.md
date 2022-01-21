@@ -17,10 +17,10 @@ Tinymotd generate a configurable dynamic motd via shell script
 To install this, with root rights:
 
 * Clone the repo
-* Install: `sudo ./install -u <user>`
+* Install: `./install -u <user>`
 * Configure layout: `vim ./config`
 * Configure widgets: `vim ./widgets/<widget-name>`
-* Run interactively: `sudo ./generate`
+* Run interactively: `./generate`
 
 The script runs:
 * every hour for system information (cpu, disks, ...)
