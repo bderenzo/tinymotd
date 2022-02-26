@@ -9,7 +9,9 @@ data='../data/apt'
 [[ -r "${data}" ]] && source "${data}"
 if [[ "${lastupdate}" != "${date}" ]]; then
     source ../tools/colors.sh
-    apt-get -qq update
+    if [[ "${USER}" == "root" ]]; then
+      apt-get -qqq update
+    fi
     pkgs=$(apt -qq list --upgradable 2>/dev/null | wc -l)
     pkgs=$(c_if_r "${pkgs}" '<' '1' 'no new package' "${pkgs} new packages")
     echo "lastupdate=${date}" >  "${data}"
