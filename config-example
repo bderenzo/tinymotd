@@ -1,13 +1,14 @@
+col=2
 #
 # widget layout configuration, avalaible widgets: 
 #  > apt, backup, certs, disks, docker, lastexec, lxc, net, pacman,
 #    partitions, services, sysinfo
 # for widget configuration, edit widget file
 #
-# col=2
+layout="
 sysinfo   network
 services  partitions
 lxc       apt
 -         certs
 -         lastexec
-
+"
