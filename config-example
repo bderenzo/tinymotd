@@ -16,6 +16,11 @@ lxc       apt
 -         lastexec
 "
 
+# services widget
+services_columns=2
+services=( 'rsyslog' 'cron' 'logrotate.timer' 'sshd' 'networking')
+svc_names=('syslog'  'cron' 'logrotate'       'sshd' 'network'  )
+
 # sysinfo widget
 mem_warn=50  # %
 cpu_warn=20  # %
