@@ -14,6 +14,13 @@ lxc       apt
 
 col=2 # motd columns
 
+# backup widget
+backups_columns=1
+maxage=35 #day
+# status file must contain: YYYYMMDD;success or YYYYMMDD;failed
+bkp_files=('/backup/data/status' '/backup/documents/status' '/backup/cloud/status')
+bkp_names=('data'                'documents'                'cloud')
+
 # certs widget
 certs_domains='github.com debian.org'# list separated by space
 
