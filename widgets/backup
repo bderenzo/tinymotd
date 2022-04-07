@@ -5,11 +5,7 @@
 #  documents  success  01/01/2021
 #  cloud      success  01/01/2021
 
-columns=1
-maxage=35 #day
-# status file must contain: YYYYMMDD;success or YYYYMMDD;failed
-bkp_files=('/backup/data/status' '/backup/documents/status' '/backup/cloud/status')
-bkp_names=('data'                'documents'                'cloud')
+source ../config
 
 out=''
 source ../tools/colors.sh
@@ -24,7 +20,7 @@ for i in "${!bkp_files[@]}"; do
         bkp_status=$(c_match "${bkp_status}" '!')
     fi
     out+="${bkp_names[$i]}|${bkp_status}|${bkp_date}|"
-    (( $(( (i+1) % columns )) == 0 )) && out+='\n'
+    (( $(( (i+1) % backups_columns )) == 0 )) && out+='\n'
 done
 out+='\n'
 

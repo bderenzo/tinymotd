@@ -5,9 +5,7 @@
 #   sda  ok   3y   36°   .     0
 #   sdb  ok   2y   44°   1k    0
 
-poweron_warn=3 # year(s)
-temp_warn=50 # °c 
-loadcycle_warn=10 # K cycle(s)
+source ../config
 
 source ../tools/colors.sh
 mapfile -t disks < <(lsblk -Spno KNAME)

@@ -1,9 +1,8 @@
-col=2
 #
 # widget layout configuration, avalaible widgets: 
-#  > apt, backup, certs, disks, docker, lastexec, lxc, net, pacman,
-#    partitions, services, sysinfo
-# for widget configuration, edit widget file
+#   > apt, backup, certs, disks, docker, lastexec, lxc, network,
+#     pacman, partitions, services, sysinfo
+# make sure you don't delete the trailing quotation mark.
 #
 layout="
 sysinfo   network
@@ -12,3 +11,41 @@ lxc       apt
 -         certs
 -         lastexec
 "
+
+col=2 # motd columns
+
+# backup widget
+backups_columns=1
+maxage=35 #day
+# status file must contain: YYYYMMDD;success or YYYYMMDD;failed
+bkp_files=('/backup/data/status' '/backup/documents/status' '/backup/cloud/status')
+bkp_names=('data'                'documents'                'cloud')
+
+# certs widget
+certs_domains='github.com debian.org'# list separated by space
+
+# disks widget
+poweron_warn=3 # year(s)
+temp_warn=50 # °c 
+loadcycle_warn=10 # K cycle(s)
+
+docker_columns=2
+docker_filter='nothing'  # excluded containers separated by |
+
+# lxc widget
+lxc_columns=2
+lxc_filter='nothing' # excluded containers separated by |
+
+# partitions widget
+disk_warn=80 # %
+partitions_filter='nothing' # excluded target separated by |
+
+# services widget
+services_columns=2
+services=( 'rsyslog' 'cron' 'logrotate.timer' 'sshd' 'networking')
+svc_names=('syslog'  'cron' 'logrotate'       'sshd' 'network'  )
+
+# sysinfo widget
+mem_warn=50 # %
+cpu_warn=20 # %
+temp_warn=60 # °c

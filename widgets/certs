@@ -4,8 +4,7 @@
 #    github.com     valid  01/01/2020
 #    debian.org     valid  01/01/2020
 
-# dommains list separated by space
-domains='github.com debian.org'
+source ../config
 
 export LANG='en_US.UTF-8'
 date=$(date +%Y%m%d)
@@ -21,7 +20,7 @@ if [[ "${lastupdate}" != "${date}" ]]; then
     out=''
     current_stamp=$(date +%s)
     source ../tools/colors.sh
-    for d in ${domains}; do
+    for d in ${certs_domains}; do
         c_raw=$(certdate "${d}")
         c_date=$(date -d "${c_raw}" +"%d/%m/%Y")
         c_stamp=$(date -d "${c_raw}" +%s)
