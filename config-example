@@ -1,12 +1,8 @@
 #
-# motd columns
-#
-col=2
-#
 # widget layout configuration, avalaible widgets: 
 #   > apt, backup, certs, disks, docker, lastexec, lxc, network,
 #     pacman, partitions, services, sysinfo
-# for widget configuration, edit widget file
+# make sure you don't delete the trailing quotation mark.
 #
 layout="
 sysinfo   network
@@ -15,6 +11,12 @@ lxc       apt
 -         certs
 -         lastexec
 "
+
+col=2 # motd columns
+
+# lxc widget
+lxc_columns=2
+lxc_filter='nothing' # excluded containers separated by |
 
 # partitions widget
 disk_warn=80 # %
@@ -26,6 +28,6 @@ services=( 'rsyslog' 'cron' 'logrotate.timer' 'sshd' 'networking')
 svc_names=('syslog'  'cron' 'logrotate'       'sshd' 'network'  )
 
 # sysinfo widget
-mem_warn=50  # %
-cpu_warn=20  # %
+mem_warn=50 # %
+cpu_warn=20 # %
 temp_warn=60 # °c
