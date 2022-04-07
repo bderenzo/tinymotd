@@ -17,13 +17,11 @@ cat headers/*
 
 # Gather user's config
 if ! [[ -f "$(pwd)/config" ]]; then
-  echo "Please create a config file following the config-example file."
-  exit 2
-else
-  source ./config
+  cp ./config-example ./config # create a starting config file if it doesn't exist
 fi
 
-# get widgets results
+. ./config # gather user configs
+
 cd widgets
 
 # execute widgets in columns
