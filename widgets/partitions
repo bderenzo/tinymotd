@@ -4,8 +4,7 @@
 #              Size  Used  Free  Use%
 #   /         10.0G  1.0G  9.0G   10%
 
-disk_warn=80 # %
-filter='nothing' # excluded target separated by |
+source ../config
 
 #width=10
 #bar() {
@@ -17,7 +16,7 @@ filter='nothing' # excluded target separated by |
 #}
 
 source ../tools/colors.sh
-mapfile -t dfs < <(df -hT | grep -vE "tmpfs|vfat|${filter}" | tail -n+2 | sort -k7)
+mapfile -t dfs < <(df -hT | grep -vE "tmpfs|vfat|${partitions_filter}" | tail -n+2 | sort -k7)
 out=" |Size|Used|Free|Use%\n"
 for line in "${dfs[@]}"; do
     IFS=" " read device type size used avail pcent target <<< "${line}"

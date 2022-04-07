@@ -16,6 +16,10 @@ lxc       apt
 -         lastexec
 "
 
+# partitions widget
+disk_warn=80 # %
+partitions_filter='nothing' # excluded target separated by |
+
 # services widget
 services_columns=2
 services=( 'rsyslog' 'cron' 'logrotate.timer' 'sshd' 'networking')
