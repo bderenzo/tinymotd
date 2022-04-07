@@ -5,23 +5,23 @@
 #   sda  ok   3y   36°   .     0
 #   sdb  ok   2y   44°   1k    0
 
-source ../config
+. ../config
 
-source ../tools/colors.sh
+. ../tools/colors.sh
 mapfile -t disks < <(lsblk -Spno KNAME)
 out=" |Hlt|Pwr|Temp|Cycl|Relc\n"
 for disk in "${disks[@]}"; do
-    smart="$(smartctl -A -H -d sat ${disk})"
-    age_h="$(echo "${smart}" | awk '/Power_On_Hours/ {print $10}')"
-    [[ -n "${age_h}" ]] && age="$(c_if $(( age_h/24/365 )) '<' "${poweron_warn}" 'y')" || age='.'
-    temp="$(echo "${smart}" | awk '/Temperature_Celsius|Airflow_Temperature_Cel/ {print $10}')"
-    temp="$(c_if ${temp} '<' "${temp_warn}" '°')" 
-    cycle="$(echo "${smart}" | awk '/Load_Cycle_Count/ {print $10}')"
-    [[ -n "${cycle}" ]] && cycle="$(c_if $(( cycle/1000 )) '<' "${loadcycle_warn}" 'k')" || cycle='.'
-    sect="$(echo "${smart}" | awk '/Reallocated_Sector_Ct/ {print $10}')"
-    state="$(echo "${smart}" | grep -o 'PASSED$')"
-    state="$(c_match_r "${state}" 'PASSED' 'ok' 'ko')" 
-    out+="${disk##*/}|${state}|${age}|${temp}|${cycle}|${sect}\n"
+  smart="$(smartctl -A -H -d sat ${disk})"
+  age_h="$(echo "${smart}" | awk '/Power_On_Hours/ {print $10}')"
+  [[ -n "${age_h}" ]] && age="$(c_if $(( age_h/24/365 )) '<' "${poweron_warn}" 'y')" || age='.'
+  temp="$(echo "${smart}" | awk '/Temperature_Celsius|Airflow_Temperature_Cel/ {print $10}')"
+  temp="$(c_if ${temp} '<' "${temp_warn}" '°')" 
+  cycle="$(echo "${smart}" | awk '/Load_Cycle_Count/ {print $10}')"
+  [[ -n "${cycle}" ]] && cycle="$(c_if $(( cycle/1000 )) '<' "${loadcycle_warn}" 'k')" || cycle='.'
+  sect="$(echo "${smart}" | awk '/Reallocated_Sector_Ct/ {print $10}')"
+  state="$(echo "${smart}" | grep -o 'PASSED$')"
+  state="$(c_match_r "${state}" 'PASSED' 'ok' 'ko')" 
+  out+="${disk##*/}|${state}|${age}|${temp}|${cycle}|${sect}\n"
 done
 
 echo

@@ -6,7 +6,7 @@
 #    memory usage  10%   users    1
 #    temperature   45°c
 
-source ../config
+. ../config
 
 ps="$(ps --ppid 2 -p 2 --deselect | wc -l)"
 load="$(cat /proc/loadavg | cut -d' ' -f3)"
@@ -17,7 +17,7 @@ cpunb="$(grep -i '^processor' /proc/cpuinfo | wc -l)"
 cpu="$(../tools/cpu.sh)"
 kern="v$(uname -r | cut -d'.' -f1-2)"
 
-source ../tools/colors.sh
+. ../tools/colors.sh
 #ps=$(c_if "${ps}" '<' '150')
 mem=$(c_if  "${mem}"  '<' "${mem_warn}" '%')
 load=$(c_if "${load}" '<' "$cpunb")
@@ -28,9 +28,9 @@ out+="cpu usage|${cpu}|uptime|${up}d\n"
 out+="memory usage|${mem}|users|${users}\n"
 
 if [[ -f '/sys/class/thermal/thermal_zone0/temp' ]]; then
-    temp="$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000 ))"
-    temp=$(c_if "${temp}" '<' "${temp_warn}" '°c')
-    out+="temperature|${temp}|"
+  temp="$(( $(cat /sys/class/thermal/thermal_zone0/temp) / 1000 ))"
+  temp=$(c_if "${temp}" '<' "${temp_warn}" '°c')
+  out+="temperature|${temp}|"
 fi
 out+="kernel|${kern}\n"
 
