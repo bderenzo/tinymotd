@@ -1,8 +1,11 @@
+#
+# motd columns
+#
 col=2
 #
 # widget layout configuration, avalaible widgets: 
-#  > apt, backup, certs, disks, docker, lastexec, lxc, net, pacman,
-#    partitions, services, sysinfo
+#   > apt, backup, certs, disks, docker, lastexec, lxc, network,
+#     pacman, partitions, services, sysinfo
 # for widget configuration, edit widget file
 #
 layout="
@@ -12,3 +15,8 @@ lxc       apt
 -         certs
 -         lastexec
 "
+
+# sysinfo widget
+mem_warn=50  # %
+cpu_warn=20  # %
+temp_warn=60 # °c

@@ -6,9 +6,7 @@
 #    memory usage  10%   users    1
 #    temperature   45°c
 
-mem_warn=50  # %
-cpu_warn=20  # %
-temp_warn=60 # °c
+source ../config
 
 ps="$(ps --ppid 2 -p 2 --deselect | wc -l)"
 load="$(cat /proc/loadavg | cut -d' ' -f3)"
