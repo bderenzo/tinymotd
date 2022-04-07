@@ -14,6 +14,11 @@ lxc       apt
 
 col=2 # motd columns
 
+# disks widget
+poweron_warn=3 # year(s)
+temp_warn=50 # °c 
+loadcycle_warn=10 # K cycle(s)
+
 docker_columns=2
 docker_filter='nothing'  # excluded containers separated by |
 
