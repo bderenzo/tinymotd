@@ -4,8 +4,7 @@
 #              Size  Used  Free  Use%
 #   /         10.0G  1.0G  9.0G   10%
 
-disk_warn=80 # %
-filter='nothing' # excluded target separated by |
+. ../config
 
 #width=10
 #bar() {
@@ -16,15 +15,15 @@ filter='nothing' # excluded target separated by |
 #    printf '%s\n' "[${prog// /o}${total}]"
 #}
 
-source ../tools/colors.sh
-mapfile -t dfs < <(df -hT | grep -vE "tmpfs|vfat|${filter}" | tail -n+2 | sort -k7)
+. ../tools/colors.sh
+mapfile -t dfs < <(df -hT | grep -vE "tmpfs|vfat|${partitions_filter}" | tail -n+2 | sort -k7)
 out=" |Size|Used|Free|Use%\n"
 for line in "${dfs[@]}"; do
-    IFS=" " read device type size used avail pcent target <<< "${line}"
-    pcentnb=$(echo ${pcent} | sed 's,%,,')
-    pcent=$(c_if "${pcentnb}" '<' "${disk_warn}" '%')
-    #out+="${target}|$(bar $pcentnb $width)|$pcent|of ${size}\n"
-    out+="${target}|${size}|${used}|${avail}|${pcent}\n"
+  IFS=" " read device type size used avail pcent target <<< "${line}"
+  pcentnb=$(echo ${pcent} | sed 's,%,,')
+  pcent=$(c_if "${pcentnb}" '<' "${disk_warn}" '%')
+  #out+="${target}|$(bar $pcentnb $width)|$pcent|of ${size}\n"
+  out+="${target}|${size}|${used}|${avail}|${pcent}\n"
 done
 
 echo

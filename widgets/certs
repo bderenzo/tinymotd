@@ -4,32 +4,31 @@
 #    github.com     valid  01/01/2020
 #    debian.org     valid  01/01/2020
 
-# dommains list separated by space
-domains='github.com debian.org'
+. ../config
 
 export LANG='en_US.UTF-8'
 date=$(date +%Y%m%d)
 data='../data/certs'
 
 certdate(){
-    openssl s_client -servername "$1" -connect "$1":443 </dev/null 2>/dev/null \
-     | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2
+  openssl s_client -servername "$1" -connect "$1":443 </dev/null 2>/dev/null \
+   | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2
 }
 
-[[ -r "${data}" ]] && source "${data}"
+[[ -r "${data}" ]] && . "${data}"
 if [[ "${lastupdate}" != "${date}" ]]; then
-    out=''
-    current_stamp=$(date +%s)
-    source ../tools/colors.sh
-    for d in ${domains}; do
-        c_raw=$(certdate "${d}")
-        c_date=$(date -d "${c_raw}" +"%d/%m/%Y")
-        c_stamp=$(date -d "${c_raw}" +%s)
-        sign=$(c_if_r "${c_stamp}" '>=' "${current_stamp}" 'valid' 'expired')
-        out+="\n${d}|${sign}|${c_date}"
-    done
-    echo "lastupdate=${date}" >  "${data}"
-    echo "out='${out}'"       >> "${data}"
+  out=''
+  current_stamp=$(date +%s)
+  . ../tools/colors.sh
+  for d in ${certs_domains}; do
+    c_raw=$(certdate "${d}")
+    c_date=$(date -d "${c_raw}" +"%d/%m/%Y")
+    c_stamp=$(date -d "${c_raw}" +%s)
+    sign=$(c_if_r "${c_stamp}" '>=' "${current_stamp}" 'valid' 'expired')
+    out+="\n${d}|${sign}|${c_date}"
+  done
+  echo "lastupdate=${date}" >  "${data}"
+  echo "out='${out}'"       >> "${data}"
 fi
 
 echo

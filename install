@@ -1,10 +1,17 @@
 #!/usr/bin/env bash
 
+# make sure a config file exists otherwise ./generate won't work.
+if ! [[ -f "$(pwd)/config" ]]; then
+  cp ./config-example ./config # create a starting config file if it doesn't exist
+fi
+
+. ./config
+
 # verify permission
 if [ "$(id -u)" != "0" ]; then
-    echo >&2 "error: permission denied"
-    echo >&2 'installation requires root privileges'
-    exit 1
+  echo >&2 "error: permission denied"
+  echo >&2 'installation requires root privileges'
+  exit 1
 fi
 
 # go to script dir
@@ -12,15 +19,15 @@ cd "$(dirname "$(readlink -f "$0")")"
 
 # parse args
 while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
-    case "$1" in
-        -u|--user)      shift; user="$1";;
-    esac
-    shift
+  case "$1" in
+    -u|--user)      shift; user="$1";;
+  esac
+  shift
 done
 
 if [[ -z "${user}" ]]; then
-    echo >&2 "usage: ./$(basename "${0}") --user <USER>"
-    exit 1
+  echo >&2 "usage: ./$(basename "${0}") --user <USER>"
+  exit 1
 fi
 
 # get homedir

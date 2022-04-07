@@ -18,8 +18,7 @@ To install this, with root rights:
 
 * Clone the repo
 * Install: `./install -u <user>`
-* Configure layout: `vim ./config`
-* Configure widgets: `vim ./widgets/<widget-name>`
+* Configure: `vim ./config`
 * Run interactively: `./generate`
 
 The script runs:

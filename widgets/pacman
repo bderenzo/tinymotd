@@ -6,18 +6,18 @@
 date=$(date +%Y%m%d)
 data='../data/pacman'
 
-[[ -r "${data}" ]] && source "${data}"
+[[ -r "${data}" ]] && . "${data}"
 if [[ "${lastupdate}" != "${date}" ]]; then
-    source ../tools/colors.sh
-    tmppath=/tmp/.motd/pacman
-    mkdir -p "${tmppath}"
-    dbpath="$(pacman-conf DBPath)"
-    ln -s "${dbpath}/local" "${tmppath}" &>/dev/null
-    fakeroot -- pacman -Sy --dbpath "${tmppath}" --logfile /dev/null &>/dev/null
-    pkgs=$(pacman -Qu --dbpath "${tmppath}" 2>/dev/null | wc -l)
-    pkgs=$(c_if_r "${pkgs}" '<' '1' 'no new package' "${pkgs} new packages")
-    echo "lastupdate=${date}" >  "${data}"
-    echo "pkgs='${pkgs}'"     >> "${data}"
+  . ../tools/colors.sh
+  tmppath=/tmp/.motd/pacman
+  mkdir -p "${tmppath}"
+  dbpath="$(pacman-conf DBPath)"
+  ln -s "${dbpath}/local" "${tmppath}" &>/dev/null
+  fakeroot -- pacman -Sy --dbpath "${tmppath}" --logfile /dev/null &>/dev/null
+  pkgs=$(pacman -Qu --dbpath "${tmppath}" 2>/dev/null | wc -l)
+  pkgs=$(c_if_r "${pkgs}" '<' '1' 'no new package' "${pkgs} new packages")
+  echo "lastupdate=${date}" >  "${data}"
+  echo "pkgs='${pkgs}'"     >> "${data}"
 fi
 
 echo
