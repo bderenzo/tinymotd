@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+# make sure a config file exists otherwise ./generate won't work.
+if ! [[ -f "$(pwd)/config" ]]; then
+  echo "Please create a config file following the config-example file."
+  exit 2
+else
+  source ./config
+fi
+
 # verify permission
 if [ "$(id -u)" != "0" ]; then
     echo >&2 "error: permission denied"
