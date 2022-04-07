@@ -14,6 +14,9 @@ lxc       apt
 
 col=2 # motd columns
 
+docker_columns=2
+docker_filter='nothing'  # excluded containers separated by |
+
 # lxc widget
 lxc_columns=2
 lxc_filter='nothing' # excluded containers separated by |

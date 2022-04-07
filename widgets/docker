@@ -4,9 +4,9 @@
 #  alpine  exited  nginx  up
 #  blog    exited  git    up
 
-columns=2
-filter='nothing'  # excluded containers separated by |
-mapfile -t containers < <(docker ps -a --format "{{.Names}} {{.Status}}" | awk '!/^('${filter}')/{print $1,$2}')
+source ../config
+
+mapfile -t containers < <(docker ps -a --format "{{.Names}} {{.Status}}" | awk '!/^('${docker_filter}')/{print $1,$2}')
 
 out=''
 source ../tools/colors.sh
@@ -14,7 +14,7 @@ for i in "${!containers[@]}"; do
     IFS=" " read name status <<< "${containers[$i]}"
     status=$(c_match "${status}" 'Up')
     out+="${name}|${status,,}|"
-    (( $(( (i+1) % columns )) == 0 )) && out+='\n'
+    (( $(( (i+1) % docker_columns )) == 0 )) && out+='\n'
 done
 if [[ -z "${out}" ]]; then
     out='none'
