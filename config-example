@@ -16,13 +16,13 @@ col=2 # motd columns
 
 # backup widget
 backups_columns=1
-maxage=35 #day
+maxage=35 # day
 # status file must contain: YYYYMMDD;success or YYYYMMDD;failed
 bkp_files=('/backup/data/status' '/backup/documents/status' '/backup/cloud/status')
 bkp_names=('data'                'documents'                'cloud')
 
 # certs widget
-certs_domains='github.com debian.org'# list separated by space
+certs_domains='github.com debian.org' # list separated by space
 
 # disks widget
 poweron_warn=3 # year(s)
@@ -30,7 +30,7 @@ temp_warn=50 # °c
 loadcycle_warn=10 # K cycle(s)
 
 docker_columns=2
-docker_filter='nothing'  # excluded containers separated by |
+docker_filter='nothing' # excluded containers separated by |
 
 # lxc widget
 lxc_columns=2
