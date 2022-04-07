@@ -20,7 +20,7 @@ if ! [[ -f "$(pwd)/config" ]]; then
   echo "Please create a config file following the config-example file."
   exit 2
 else
-  source ./config
+  . ./config
 fi
 
 # get widgets results

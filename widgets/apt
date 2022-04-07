@@ -1,19 +1,19 @@
 #!/usr/bin/env bash
 
-#  packages:
-#    3 new packages available...
+# packages:
+# 3 new packages available...
 
 date=$(date +%Y%m%d)
 data='../data/apt'
 
-[[ -r "${data}" ]] && source "${data}"
+[[ -r "${data}" ]] && . "${data}"
 if [[ "${lastupdate}" != "${date}" ]]; then
-    source ../tools/colors.sh
-    apt-get -qq update
-    pkgs=$(apt -qq list --upgradable 2>/dev/null | wc -l)
-    pkgs=$(c_if_r "${pkgs}" '<' '1' 'no new package' "${pkgs} new packages")
-    echo "lastupdate=${date}" >  "${data}"
-    echo "pkgs='${pkgs}'"     >> "${data}"
+  . ../tools/colors.sh
+  apt-get -qq update
+  pkgs=$(apt -qq list --upgradable 2>/dev/null | wc -l)
+  pkgs=$(c_if_r "${pkgs}" '<' '1' 'no new package' "${pkgs} new packages")
+  echo "lastupdate=${date}" >  "${data}"
+  echo "pkgs='${pkgs}'"     >> "${data}"
 fi
 
 echo

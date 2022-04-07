@@ -12,21 +12,18 @@ delay=0.5
 previous_idle=0
 previous_total=0
 for i in $(seq "${iter}"); do
-        cpu=( $(grep '^cpu ' /proc/stat) )
-        unset cpu[0]
-        # compute idle cpu time
-        idle=$(( ${cpu[4]} + ${cpu[5]} ))
-        # compute total cpu time
-        total=$(( ${cpu[@]/%/+}0 ))
-        # compute cpu usage since last check
-        idle_d=$(( idle - previous_idle ))
-        total_d=$(( total - previous_total ))
-        cpu_usage=$(( 100*(total_d-idle_d)/total_d ))
-        # remember cpu total and idle for next check
-        previous_total="${total}"
-        previous_idle="${idle}"
-        # wait before next check
-        sleep "${delay}"
+  cpu=( $(grep '^cpu ' /proc/stat) )
+  unset cpu[0]
+  idle=$(( ${cpu[4]} + ${cpu[5]} )) # compute idle cpu time
+  total=$(( ${cpu[@]/%/+}0 )) # compute total cpu time
+  idle_d=$(( idle - previous_idle )) # compute cpu usage since last check
+  total_d=$(( total - previous_total ))
+  cpu_usage=$(( 100*(total_d-idle_d)/total_d ))
+  # remember cpu total and idle for next check
+  previous_total="${total}"
+  previous_idle="${idle}"
+  # wait before next check
+  sleep "${delay}"
 done
 echo "${cpu_usage}" # %
 

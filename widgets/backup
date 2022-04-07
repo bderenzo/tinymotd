@@ -5,22 +5,22 @@
 #  documents  success  01/01/2021
 #  cloud      success  01/01/2021
 
-source ../config
+. ../config
 
 out=''
-source ../tools/colors.sh
+. ../tools/colors.sh
 for i in "${!bkp_files[@]}"; do
-    bkp_status=$(tail -n1 "${bkp_files[$i]}" | cut -d';' -f2)
-    bkp_date_raw=$(tail -n1 "${bkp_files[$i]}" | cut -d';' -f1)
-    bkp_date=$(date -d "${bkp_date_raw}" +"%d/%m/%Y")
-    if [[ "${bkp_status}" == 'success' ]]; then
-    	diff=$(( ($(date +%s)-$(date +%s -d ${bkp_date_raw}))/86400 ))
-        bkp_status=$(c_if_r "${diff}" '<' "${maxage}" 'success' 'expired')
-    else
-        bkp_status=$(c_match "${bkp_status}" '!')
-    fi
-    out+="${bkp_names[$i]}|${bkp_status}|${bkp_date}|"
-    (( $(( (i+1) % backups_columns )) == 0 )) && out+='\n'
+  bkp_status=$(tail -n1 "${bkp_files[$i]}" | cut -d';' -f2)
+  bkp_date_raw=$(tail -n1 "${bkp_files[$i]}" | cut -d';' -f1)
+  bkp_date=$(date -d "${bkp_date_raw}" +"%d/%m/%Y")
+  if [[ "${bkp_status}" == 'success' ]]; then
+    diff=$(( ($(date +%s)-$(date +%s -d ${bkp_date_raw}))/86400 ))
+    bkp_status=$(c_if_r "${diff}" '<' "${maxage}" 'success' 'expired')
+  else
+    bkp_status=$(c_match "${bkp_status}" '!')
+  fi
+  out+="${bkp_names[$i]}|${bkp_status}|${bkp_date}|"
+  (( $(( (i+1) % backups_columns )) == 0 )) && out+='\n'
 done
 out+='\n'
 
