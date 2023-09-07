@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
-# /!\ Need pacman packages manager
 
 #  packages:
-#    3 available
+#    3 new packages available...
 
 date=$(date +%Y%m%d)
 data='../data/pacman'
@@ -23,4 +22,4 @@ fi
 
 echo
 echo 'packages:'
-echo -e "  ${pkgs} available"
+echo -e "  ${pkgs} available..."

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #  packages:
-#    3 available
+#    3 new packages available...
 
 date=$(date +%Y%m%d)
 data='../data/apt'
@@ -11,11 +11,11 @@ if [[ "${lastupdate}" != "${date}" ]]; then
     source ../tools/colors.sh
     apt-get -qq update
     pkgs=$(apt -qq list --upgradable 2>/dev/null | wc -l)
-    pkgs=$(c_if_r "${pkgs}" '<' '1' '0' "${pkgs}")
+    pkgs=$(c_if_r "${pkgs}" '<' '1' 'no new package' "${pkgs} new packages")
     echo "lastupdate=${date}" >  "${data}"
     echo "pkgs='${pkgs}'"     >> "${data}"
 fi
 
 echo
 echo 'packages:'
-echo -e "  ${pkgs} available"
+echo -e "  ${pkgs} available..."

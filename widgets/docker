@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
+# /!\ Need docker binary
 
 # docker containers:
-#  alpine  exited  nginx  up
-#  blog    exited  git    up
+#  o alpine  x nginx
+#  o blog    x git
 
 columns=2
 filter='nothing'  # excluded containers separated by |
+
 mapfile -t containers < <(docker ps -a --format "{{.Names}} {{.Status}}" | awk '!/^('${filter}')/{print $1,$2}')
 
 out=''
 source ../tools/colors.sh
 for i in "${!containers[@]}"; do
     IFS=" " read name status <<< "${containers[$i]}"
-    status=$(c_match "${status}" 'Up')
-    out+="${name}|${status,,}|"
+    status=$(c_match_r "${status}" 'Up' 'o' 'x')
+    out+="${status}|${name}|"
     (( $(( (i+1) % columns )) == 0 )) && out+='\n'
 done
 if [[ -z "${out}" ]]; then

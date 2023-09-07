@@ -10,6 +10,55 @@ fi
 # go to script dir
 cd "$(dirname "$(readlink -f "$0")")"
 
+# add cron scheduled job
+add_cron(){
+    local name="${1}"  cmd="${2}"  motd="${3}"
+    cron_file="/etc/cron.hourly/${name}"
+    echo "[+] add cron in ${cron_file}"
+    cat << EOF > "${cron_file}"
+#!/usr/bin/env sh
+${cmd} > ${motd}
+EOF
+    chmod +x "${cron_file}"
+}
+
+# add systemd scheduled job
+add_systemd(){
+    local name="${1}"  cmd="${2}"  motd="${3}"
+    local service_file="/etc/systemd/system/${name}.service"
+    echo "[+] add service in ${service_file}"
+    cat << EOF > ${service_file}
+[Unit]
+Description=${name} executor
+After=network.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=${cmd}
+StandardOutput=file:${motd}
+StandardError=file:${motd}
+
+[Install]
+WantedBy=multi-user.target
+EOF
+    local timer_file="/etc/systemd/system/${name}.timer"
+    echo "[+] add timer in ${timer_file}"
+    cat << EOF > ${timer_file}
+[Unit]
+Description=${name} timer
+
+[Timer]
+OnCalendar=hourly
+AccuracySec=5s
+
+[Install]
+WantedBy=timers.target
+EOF
+    systemctl daemon-reload
+    systemctl enable --now ${name}.timer
+}
+
 # parse args
 while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
     case "$1" in
@@ -19,6 +68,7 @@ while [[ "$1" =~ ^- && ! "$1" == "--" ]]; do
 done
 
 if [[ -z "${user}" ]]; then
+    echo >&2 "error: no user specified"
     echo >&2 "usage: ./$(basename "${0}") --user <USER>"
     exit 1
 fi
@@ -26,19 +76,18 @@ fi
 # get homedir
 home="$(getent passwd "${user}" | cut -d: -f6)"
 
-# motd file
+# search for job scheduler
 motd="$(pwd)/data/motd"
+if [[ -d /run/systemd/system ]]; then 
+    add_systemd 'tinymotd' "$(pwd)/generate" "${motd}"
+elif [[ -d /etc/cron.hourly ]]; then 
+    add_cron 'tinymotd' "$(pwd)/generate" "${motd}"
+else
+    echo >&2 "error: no job scheduler method found"
+    exit 1
+fi
 
-# add cron rule
-cron='/etc/cron.hourly/tinymotd'
-echo "[+] add cron in ${cron}"
-cat << EOF > "${cron}"
-#!/usr/bin/env bash
-$(pwd)/generate > ${motd}
-EOF
-chmod +x "${cron}"
-
-# add print 
+# add print
 bashrc="${home}/.bashrc"
 echo "[+] add motd load in ${bashrc}"
 cat << EOF >> "${bashrc}"

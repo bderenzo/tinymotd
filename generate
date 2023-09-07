@@ -13,11 +13,11 @@ if [[ $1 == '-f' ]]; then
 fi
 
 # print header
-cat headers/*
+cat headers/* 2>/dev/null
 
 # get widgets results
+col=$(grep 'col=' ./config | sed 's/.*col=//')
 cd widgets
-col=$(grep 'col=' ../config | sed 's/.*col=//')
 # execute widgets in columns
 for i in $(seq 1 "${col}"); do
     for w in $(awk '!/^#/ {print $'$i'}' ../config); do
@@ -31,5 +31,10 @@ motd=''
 for c in "${f[@]}"; do
     [[ -z ${motd} ]] && motd="${c}" || motd=$(paste <(echo -e "${motd}") <(echo -e "${c}") -d'@')
 done
-echo -e "${motd}"| sed 's,@, @ ,' | column -ts '@'
+echo -e "${motd}" | column -ts '@'
 
+# print messages
+cd ..
+cat messages/* 2>/dev/null
+
+exit 0

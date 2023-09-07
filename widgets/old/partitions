@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 
 # partitions usage:
-#   30%  /      50%  /backup
-#   25%  /data
+#              Size  Used  Free  Use%
+#   /         10.0G  1.0G  9.0G   10%
 
-columns=2
 disk_warn=80 # %
 filter='nothing' # excluded target separated by |
 
-#width=7
+#width=10
 #bar() {
 #    ((elapsed=$1*$2/100))
 #    printf -v prog  "%${elapsed}s"
@@ -19,14 +18,13 @@ filter='nothing' # excluded target separated by |
 
 source ../tools/colors.sh
 mapfile -t dfs < <(df -hT | grep -vE "tmpfs|vfat|${filter}" | tail -n+2 | sort -k7)
-
-for i in "${!dfs[@]}"; do
-    IFS=" " read device type size used avail pcent target <<< "${dfs[${i}]}"
+out=" |Size|Used|Free|Use%\n"
+for line in "${dfs[@]}"; do
+    IFS=" " read device type size used avail pcent target <<< "${line}"
     pcentnb=$(echo ${pcent} | sed 's,%,,')
     pcent=$(c_if "${pcentnb}" '<' "${disk_warn}" '%')
-    out+="${pcent}|${target}|"
-    #out+="$(bar ${pcentnb} ${width})|${pcent}|${target}|"
-    (( $(( (i+1) % columns )) == 0 )) && out+='\n'
+    #out+="${target}|$(bar $pcentnb $width)|$pcent|of ${size}\n"
+    out+="${target}|${size}|${used}|${avail}|${pcent}\n"
 done
 
 echo

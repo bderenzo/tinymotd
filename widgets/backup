@@ -1,29 +1,34 @@
 #!/usr/bin/env bash
 
 #backup:
-#  data       success  01/01/2021
-#  documents  success  01/01/2021
-#  cloud      success  01/01/2021
+#  o os (5d)  x cloud (45d)
 
-columns=1
+columns=2
 maxage=35 #day
+
 # status file must contain: YYYYMMDD;success or YYYYMMDD;failed
-bkp_files=('/backup/data/status' '/backup/documents/status' '/backup/cloud/status')
-bkp_names=('data'                'documents'                'cloud')
+bkp_dir='/backup'
+bkp_files+=("${bkp_dir}/os/status");     bkp_names+=('os')
+bkp_files+=("${bkp_dir}/cloud/status");  bkp_names+=('cloud')
 
 out=''
 source ../tools/colors.sh
 for i in "${!bkp_files[@]}"; do
-    bkp_status=$(tail -n1 "${bkp_files[$i]}" | cut -d';' -f2)
-    bkp_date_raw=$(tail -n1 "${bkp_files[$i]}" | cut -d';' -f1)
-    bkp_date=$(date -d "${bkp_date_raw}" +"%d/%m/%Y")
-    if [[ "${bkp_status}" == 'success' ]]; then
-    	diff=$(( ($(date +%s)-$(date +%s -d ${bkp_date_raw}))/86400 ))
-        bkp_status=$(c_if_r "${diff}" '<' "${maxage}" 'success' 'expired')
+    if ! [ -f "${bkp_files[$i]}" ]; then
+        diff="!"
+	bkp_status=$(c_match_r "${bkp_status}" '!' '' "${pt}")
     else
-        bkp_status=$(c_match "${bkp_status}" '!')
+        bkp_status=$(tail -n1 "${bkp_files[$i]}" | cut -d';' -f2)
+        bkp_date_raw=$(tail -n1 "${bkp_files[$i]}" | cut -d';' -f1)
+        bkp_date=$(date -d "${bkp_date_raw}" +"%d/%m/%Y")
+        if [[ "${bkp_status}" == 'success' ]]; then
+            diff=$(( ($(date +%s)-$(date +%s -d ${bkp_date_raw}))/86400 ))
+            bkp_status=$(c_if_r "${diff}" '<' "${maxage}" 'o' 'x')
+        else
+            bkp_status=$(c_match_r "${bkp_status}" '!' '' 'x')
+        fi
     fi
-    out+="${bkp_names[$i]}|${bkp_status}|${bkp_date}|"
+    out+="${bkp_status} ${bkp_names[$i]} (${diff}d)|"
     (( $(( (i+1) % columns )) == 0 )) && out+='\n'
 done
 out+='\n'

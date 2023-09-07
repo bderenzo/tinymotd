@@ -1,22 +1,19 @@
 #!/usr/bin/env bash
-# /!\ Need lxc binaries
 
 #  lxc status:
-#    o git   o mailer
-#    o dlna  x plex
+#    git   stopped  mailer  stopped
+#    dlna  running  plex    stopped
 
-columns=3
+columns=2
 filter='nothing'  # excluded containers separated by |
-
 mapfile -t containers < <(lxc-ls -f | awk '!/^('${filter}')/{print $1,$2}' | sed '/^\s*$/d' | tail -n+2)
 
 out=''
 source ../tools/colors.sh
 for i in "${!containers[@]}"; do
     IFS=" " read name status <<< "${containers[$i]}"
-    status=$(c_match_r "${status}" 'RUNNING' "o" "x")
-    #out+="${status,,} ${name}|"
-    out+="${status} ${name}|"
+    status=$(c_match "${status}" 'RUNNING')
+    out+="${name}|${status,,}|"
     (( $(( (i+1) % columns )) == 0 )) && out+='\n'
 done
 if [[ -z "${out}" ]]; then
