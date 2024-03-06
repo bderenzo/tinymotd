@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+#  systemd:
+#    x systemd-networkd   x nftables
+#    x apparmor
+
+columns=2
+
+out=''
+source ../tools/colors.sh
+
+if systemctl --quiet is-system-running; then
+    _ok=$(c_match 'o' 'o')
+    out="${_ok} operational"
+else
+    _ko=$(c_match 'x' '!')
+    mapfile -t failed_services < <(systemctl list-units --failed --plain --no-legend | cut -d' ' -f1)
+    for i in "${!failed_services[@]}"; do
+        out+="${_ko} ${failed_services[${i}]%.*}|"
+        (( $(( (i+1) % columns )) == 0 )) && out+='\n'
+    done
+fi
+
+echo
+echo 'systemd:'
+echo -e "${out}" | column -ts '|' | sed -e 's/^/  /'
