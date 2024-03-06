@@ -1,21 +1,47 @@
 #!/usr/bin/env bash
 
 #  packages:
-#    3 available
+#    3 available (2 security)
 
 date=$(date +%Y%m%d)
 data='../data/apt'
 
+source ../tools/colors.sh
+
 [[ -r "${data}" ]] && source "${data}"
+# update avalaible upgradable packages information if needed
 if [[ "${lastupdate}" != "${date}" ]]; then
-    source ../tools/colors.sh
     apt-get -qq update
-    pkgs=$(apt -qq list --upgradable 2>/dev/null | wc -l)
-    pkgs=$(c_if_r "${pkgs}" '<' '1' '0' "${pkgs}")
+    upgradable_pkgs=$(apt -qq list --upgradable 2>/dev/null)
+
+    # total upgradable packages count
+    t_pkgs=$(echo "${upgradable_pkgs}" | grep -cv '^ *$')
+
+    # security upgradable packages count
+    if [ "${t_pkgs}" != '0' ]; then
+        s_pkgs=$(echo "${upgradable_pkgs}" | grep -c '-security')
+    else
+        s_pkgs='0'
+    fi
+
     echo "lastupdate=${date}" >  "${data}"
-    echo "pkgs='${pkgs}'"     >> "${data}"
+    echo "t_pkgs=${t_pkgs}" >> "${data}"
+    echo "s_pkgs=${s_pkgs}" >> "${data}"
+fi
+
+# generate packages messages
+if [ "${t_pkgs}" != '0' ]; then
+    t_pkgs=$(c_if "${t_pkgs}" '<' '1')
+    s_pkgs=$(c_if "${s_pkgs}" '<' '1')
+    msg="${t_pkgs} available (${s_pkgs} security)"
+else
+    t_pkgs=$(c_if "${t_pkgs}" '<' '1')
+    msg="${t_pkgs} available"
 fi
 
 echo
 echo 'packages:'
-echo -e "  ${pkgs} available"
+echo -e "  ${msg}"
+if ! [ -f /run/reboot-required ]; then
+    echo -e "  ${bred}!${reset} reboot required"
+fi
