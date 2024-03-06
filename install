@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # verify permission
-if [ "$(id -u)" != "0" ]; then
+if [ "${EUID:-$(id -u)}" != 0 ]; then
     echo >&2 "error: permission denied"
     echo >&2 'installation requires root privileges'
     exit 1
@@ -12,22 +12,26 @@ cd "$(dirname "$(readlink -f "$0")")"
 
 # add cron scheduled job
 add_cron(){
-    local name="${1}"  cmd="${2}"  motd="${3}"
+    local name="${1}"
+    local cmd="${2}"
+    local motd="${3}"
     cron_file="/etc/cron.hourly/${name}"
     echo "[+] add cron in ${cron_file}"
     cat << EOF > "${cron_file}"
 #!/usr/bin/env sh
-${cmd} > ${motd}
+${cmd} > "${motd}"
 EOF
     chmod +x "${cron_file}"
 }
 
 # add systemd scheduled job
 add_systemd(){
-    local name="${1}"  cmd="${2}"  motd="${3}"
+    local name="${1}"
+    local cmd="${2}"
+    local motd="${3}"
     local service_file="/etc/systemd/system/${name}.service"
     echo "[+] add service in ${service_file}"
-    cat << EOF > ${service_file}
+    cat << EOF > "${service_file}"
 [Unit]
 Description=${name} executor
 After=network.target
@@ -36,15 +40,15 @@ After=network-online.target
 [Service]
 Type=oneshot
 ExecStart=${cmd}
-StandardOutput=file:${motd}
-StandardError=file:${motd}
+StandardOutput=truncate:${motd}
+StandardError=truncate:${motd}
 
 [Install]
 WantedBy=multi-user.target
 EOF
     local timer_file="/etc/systemd/system/${name}.timer"
     echo "[+] add timer in ${timer_file}"
-    cat << EOF > ${timer_file}
+    cat << EOF > "${timer_file}"
 [Unit]
 Description=${name} timer
 
