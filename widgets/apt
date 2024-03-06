@@ -42,6 +42,6 @@ fi
 echo
 echo 'packages:'
 echo -e "  ${msg}"
-if ! [ -f /run/reboot-required ]; then
+if [ -f /run/reboot-required ]; then
     echo -e "  ${bred}!${reset} reboot required"
 fi
