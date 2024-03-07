@@ -12,7 +12,7 @@ loadcycle_warn=10 # K cycle(s)
 
 source ../tools/colors.sh
 mapfile -t disks < <(lsblk -Spno KNAME)
-out=" | |Pwr|Temp|Cycl|Relc\n"
+out=" |Pwr|Temp|Cycl|Relc\n"
 for disk in "${disks[@]}"; do
     smart="$(smartctl -A -H -d sat ${disk})"
     age_h="$(echo "${smart}" | awk '/Power_On_Hours/ {print $10}')"
@@ -24,7 +24,7 @@ for disk in "${disks[@]}"; do
     sect="$(echo "${smart}" | awk '/Reallocated_Sector_Ct/ {print $10}')"
     health="$(echo "${smart}" | grep -o 'PASSED$')"
     state="$(c_match_r "${health}" 'PASSED' 'o' 'x')" 
-    out+="${state}|${disk##*/}|${age}|${temp}|${cycle}|${sect}\n"
+    out+="${state} ${disk##*/}|${age}|${temp}|${cycle}|${sect}\n"
 done
 
 echo

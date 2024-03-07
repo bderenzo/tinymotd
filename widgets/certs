@@ -14,7 +14,8 @@ data='../data/certs'
 
 certdate(){
     openssl s_client -servername "$1" -connect "$1":443 </dev/null 2>/dev/null \
-     | openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2
+     | openssl x509 -noout -enddate 2>/dev/null \
+     | cut -d= -f2
 }
 
 [[ -r "${data}" ]] && source "${data}"
@@ -26,8 +27,8 @@ if [[ "${lastupdate}" != "${date}" ]]; then
         c_raw=$(certdate "${d}")
         c_date=$(date -d "${c_raw}" +"%d/%m/%Y")
         c_stamp=$(date -d "${c_raw}" +%s)
-        sign=$(c_if_r "${c_stamp}" '>=' "${current_stamp}" 'o' 'x')
-        out+="\n${sign}|${d}|${c_date}"
+        state=$(c_if_r "${c_stamp}" '>=' "${current_stamp}" 'o' 'x')
+        out+="\n${state} ${d}|${c_date}"
     done
     echo "lastupdate=${date}" >  "${data}"
     echo "out='${out}'"       >> "${data}"
