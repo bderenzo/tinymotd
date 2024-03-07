@@ -16,13 +16,13 @@ fi
 cat headers/* 2>/dev/null
 
 # get widgets results
-col=$(grep 'col=' ./config | sed 's/.*col=//')
+col=$(awk -F'=' '/^# col=/ {print $2}' ./config)
 cd widgets
 # execute widgets in columns
 for i in $(seq 1 "${col}"); do
     for w in $(awk '!/^#/ {print $'$i'}' ../config); do
         # append content
-        [ -e "${w}" ] && f[$i]="${f[$i]} $(./${w})\n"
+        [ -e "${w}" ] && f[$i]="${f[$i]} $(./${w} 2>/dev/null)\n"
     done
 done
 
@@ -36,5 +36,4 @@ echo -e "${motd}" | column -ts '@'
 # print messages
 cd ..
 cat messages/* 2>/dev/null
-
 exit 0

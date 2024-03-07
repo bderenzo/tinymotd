@@ -1,9 +1,9 @@
 # Widget layout configuration file
 # Available widgets: 
 #
-#   apt, backup, certs, disks, 
-#   docker, lastexec, lxc, network, 
-#   pacman, partitions, services, sysinfo
+#   apt, backup, certs, disks, docker,
+#   lastexec, lxc, network, pacman,
+#   partitions, services, systemd, sysinfo
 #
 # For widget configuration, edit the corresponding 
 # widget file in the widget directory
