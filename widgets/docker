@@ -8,7 +8,7 @@
 columns=2
 filter='nothing'  # excluded containers separated by |
 
-mapfile -t containers < <(docker ps -a --format "{{.Names}} {{.state}}" | awk '!/^('${filter}')/{print $1,$2}')
+mapfile -t containers < <(docker ps -a --format "{{.Names}} {{.State}}" | awk '!/^('${filter}')/{print $1,$2}')
 
 out=''
 source ../tools/colors.sh
