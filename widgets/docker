@@ -14,7 +14,7 @@ out=''
 source ../tools/colors.sh
 for i in "${!containers[@]}"; do
     IFS=" " read name state <<< "${containers[$i]}"
-    state=$(c_match_r "${state}" 'Up' 'o' 'x')
+    state=$(c_match_r "${state}" 'running' 'o' 'x')
     out+="${state}|${name}|"
     (( $(( (i+1) % columns )) == 0 )) && out+='\n'
 done
