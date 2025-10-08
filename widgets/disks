@@ -7,23 +7,40 @@
 #   x sdb  5y   44°   1k    0
 
 poweron_warn=3 # year(s)
-temp_warn=50 # °c 
+temp_warn=50 # °c
 loadcycle_warn=10 # K cycle(s)
 
 source ../tools/colors.sh
 mapfile -t disks < <(lsblk -Spno KNAME)
 out=" |Pwr|Temp|Cycl|Relc\n"
 for disk in "${disks[@]}"; do
-    smart="$(smartctl -A -H -d sat ${disk})"
+    smart="$(smartctl -A -H -d sat "${disk}")"
+
+    # Get power on age
     age_h="$(echo "${smart}" | awk '/Power_On_Hours/ {print $10}')"
-    [[ -n "${age_h}" ]] && age="$(c_if $(( age_h/24/365 )) '<' "${poweron_warn}" 'y')" || age='.'
+    if [[ -n "${age_h}" ]]; then
+        age="$(c_if $(( age_h/24/365 )) '<' "${poweron_warn}" 'y')"
+    else
+        age='.'
+    fi
+
+    # Get temperature
     temp="$(echo "${smart}" | awk '/Temperature_Celsius|Airflow_Temperature_Cel/ {print $10}')"
-    temp="$(c_if ${temp} '<' "${temp_warn}" '°')" 
+    temp="$(c_if ${temp} '<' "${temp_warn}" '°')"
+
+    # Get disk cycle
     cycle="$(echo "${smart}" | awk '/Load_Cycle_Count/ {print $10}')"
-    [[ -n "${cycle}" ]] && cycle="$(c_if $(( cycle/1000 )) '<' "${loadcycle_warn}" 'k')" || cycle='.'
+    if [[ -n "${cycle}" ]]; then
+       cycle="$(c_if $(( cycle/1000 )) '<' "${loadcycle_warn}" 'k')"
+    else
+       cycle='.'
+    fi
+
+    # Get sectors and disk health
     sect="$(echo "${smart}" | awk '/Reallocated_Sector_Ct/ {print $10}')"
     health="$(echo "${smart}" | grep -o 'PASSED$')"
-    state="$(c_match_r "${health}" 'PASSED' 'o' 'x')" 
+    state="$(c_match_r "${health}" 'PASSED' 'o' 'x')"
+
     out+="${state} ${disk##*/}|${age}|${temp}|${cycle}|${sect}\n"
 done
 

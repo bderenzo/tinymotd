@@ -13,7 +13,7 @@ date=$(date +%Y%m%d)
 data='../data/certs'
 
 certdate(){
-    openssl s_client -servername "$1" -connect "$1":443 </dev/null 2>/dev/null \
+    openssl s_client -servername "${1}" -connect "${1}:443" </dev/null 2>/dev/null \
      | openssl x509 -noout -enddate 2>/dev/null \
      | cut -d= -f2
 }

@@ -1,47 +1,59 @@
 #!/usr/bin/env bash
 
-#  packages:
-#    3 available (2 security)
+# packages:
+#   4 upgradable  2 security
+#   3 cleanable   0 obsolete
+#   ! reboot required
 
 date=$(date +%Y%m%d)
 data='../data/apt'
+columns=2
 
 source ../tools/colors.sh
-
 [[ -r "${data}" ]] && source "${data}"
-# update avalaible upgradable packages information if needed
+
+# Comment a line to disable
+packages_query=(
+  "?upgradable                                 upgradable"
+  "?and(?upgradable,?origin(Debian-Security))  security"
+  "?or(?garbage,?config-files)                 cleanable"
+  "?obsolete                                   obsolete"
+#  "?garbage                                    removable"
+#  "?config-files                               residual"
+)
+
 if [[ "${lastupdate}" != "${date}" ]]; then
     apt-get -qq update
-    upgradable_pkgs=$(apt -qq list --upgradable 2>/dev/null)
-
-    # total upgradable packages count
-    t_pkgs=$(echo "${upgradable_pkgs}" | grep -cv '^ *$')
-
-    # security upgradable packages count
-    if [ "${t_pkgs}" != '0' ]; then
-        s_pkgs=$(echo "${upgradable_pkgs}" | grep -c '-security')
-    else
-        s_pkgs='0'
-    fi
-
-    echo "lastupdate=${date}" >  "${data}"
-    echo "t_pkgs=${t_pkgs}" >> "${data}"
-    echo "s_pkgs=${s_pkgs}" >> "${data}"
+    {
+      echo "lastupdate=${date}"
+      for entry in "${packages_query[@]}"; do
+          IFS=" " read -r query label <<< "${entry}"
+          value=$(apt -qq list "${query}" 2>/dev/null | wc -l)
+          echo "${label,,}_pkgs=${value}"
+      done
+    } > "${data}"
+    # read to source to load values
+    source "${data}"
 fi
 
-# generate packages messages
-if [ "${t_pkgs}" != '0' ]; then
-    t_pkgs=$(c_if "${t_pkgs}" '<' '1')
-    s_pkgs=$(c_if "${s_pkgs}" '<' '1')
-    msg="${t_pkgs} available (${s_pkgs} security)"
-else
-    t_pkgs=$(c_if "${t_pkgs}" '<' '1')
-    msg="${t_pkgs} available"
+out=''
+for i in "${!packages_query[@]}"; do
+    IFS=" " read -r _ label <<< "${packages_query[$i]}"
+    var="${label,,}_pkgs"
+    value=$(c_if "${!var}" '<' '1')
+    out+="${value} ${label}|"
+    (( (i+1) % columns == 0 )) && out+=$'\n'
+done
+if [[ -z "${out}" ]]; then
+    out='none'
 fi
+out+='\n'
 
 echo
 echo 'packages:'
-echo -e "  ${msg}"
-if [ -f /run/reboot-required ]; then
+echo -e "${out}" | column -ts '|' | sed -e 's/^/  /'
+
+if [[ -f /run/reboot-required ]]; then
     echo -e "  ${bred}!${reset} reboot required"
 fi
+

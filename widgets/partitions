@@ -6,7 +6,7 @@
 
 columns=2
 disk_warn=80 # %
-filter='nothing' # excluded target separated by |
+filter='_nothing_' # excluded target separated by |
 
 #width=7
 #bar() {
@@ -18,7 +18,7 @@ filter='nothing' # excluded target separated by |
 #}
 
 source ../tools/colors.sh
-mapfile -t dfs < <(df -hT | grep -vE "tmpfs|vfat|${filter}" | tail -n+2 | sort -k7)
+mapfile -t dfs < <(df -hT | grep -vE "tmpfs|vfat|efivarfs|${filter}" | tail -n+2 | sort -k7)
 
 for i in "${!dfs[@]}"; do
     IFS=" " read device type size used avail pcent target <<< "${dfs[${i}]}"
