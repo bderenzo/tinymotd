@@ -17,7 +17,7 @@ source ../tools/colors.sh
 # Comment a line to disable
 packages_query=(
   'upgradable  ?upgradable'
-  'security    ?and(?upgradable,?origin(Debian-Security))'
+  'security    ?and(?upgradable,?security)'
   'cleanable   ?or(?garbage,?config-files)'
   'obsolete    ?obsolete'
 #  'removable   ?garbage'
