@@ -13,11 +13,20 @@ columns=2
 source ../tools/colors.sh
 [[ -r "${data}" ]] && source "${data}"
 
+# ?security needs apt 2.7.11+
+apt_version=$(apt-get --version | awk 'NR==1 {print $2}')
+if dpkg --compare-versions "${apt_version}" ge 2.7.11; then
+    security_query='?and(?upgradable,?security)'
+else
+    # a -security version that is not the installed one (archive "now")
+    security_query='?and(?upgradable,?narrow(?archive(-security$),?not(?archive(^now$))))'
+fi
+
 # One query per line: '<name>  <apt pattern>'
 # Comment a line to disable
 packages_query=(
   'upgradable  ?upgradable'
-  'security    ?and(?upgradable,?security)'
+  "security    ${security_query}"
   'cleanable   ?or(?garbage,?config-files)'
   'obsolete    ?obsolete'
 #  'removable   ?garbage'
