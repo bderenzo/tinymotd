@@ -25,6 +25,22 @@ cpunb=${#cpus[@]}
 cpu=$(../tools/cpu.sh)
 IFS=. read -r kern_major kern_minor _ < /proc/sys/kernel/osrelease
 
+# CPU sensor: first thermal zone or hwmon with a CPU type, else thermal_zone0
+temp_file='/sys/class/thermal/thermal_zone0/temp'
+for name_file in /sys/class/thermal/thermal_zone*/type /sys/class/hwmon/hwmon*/name; do
+    [[ -r "${name_file}" ]] || continue
+    read -r name < "${name_file}"
+    case "${name}" in
+        x86_pkg_temp|*cpu*) file="${name_file%/*}/temp" ;;
+        k10temp)            file="${name_file%/*}/temp1_input" ;;
+        *)                  continue ;;
+    esac
+    if [[ -r "${file}" ]]; then
+        temp_file="${file}"
+        break
+    fi
+done
+
 #ps=$(c_if "${ps}" '<' '150')
 mem_status=$(c_if  "${mem}"  '<' "${mem_warn}" '%')
 load_status=$(c_if "${load}" '<' "${cpunb}")
@@ -34,8 +50,8 @@ out=''
 out+="${kern_major}.${kern_minor}|kernel|${ps}|tasks\n"
 out+="${cpu_status}|cpu|${load_status}|load\n"
 out+="${mem_status}|memory|"
-if [[ -f '/sys/class/thermal/thermal_zone0/temp' ]]; then
-    read -r temp < /sys/class/thermal/thermal_zone0/temp
+if [[ -f "${temp_file}" ]]; then
+    read -r temp < "${temp_file}"
     temp=$(c_if "$(( temp / 1000 ))" '<' "${temp_warn}" '°')
     out+="${temp}|temp\n"
 fi
